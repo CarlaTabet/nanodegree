@@ -48,6 +48,7 @@ training_args = TrainingArguments(
     #fp16=True,
 )
 
+# made smaller subset for sake of running in time
 trainer = Trainer(
     model=model,
     args=training_args,
@@ -68,7 +69,7 @@ config = LoraConfig(
     bias="none"
 )
 
-# # Create a PEFT model
+# create a PEFT model
 lora_model = get_peft_model(model, config)
 lora_model.print_trainable_parameters()
 
@@ -77,7 +78,7 @@ trainer.train()
 lora_model.save_pretrained("peft-lora")
 
 lora_model = PeftModelForSequenceClassification.from_pretrained(model, "peft-lora", from_transformers=True)
-# Now train with fine-tuned results
+# now train with fine-tuned results
 trainer.model = lora_model
 fine_tuned_result = trainer.evaluate()
 print(f"Fine-tuned results: {fine_tuned_result}")
